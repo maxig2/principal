@@ -1,3 +1,7 @@
+from paquete.estadisticas import *
+from paquete.funcione import *
+from paquete.variables import *
+
 nombre_guardado = "Emiliano"
 contraseña_guardada = 1234
 
@@ -6,7 +10,7 @@ nombre = input("ingrese su nombre: ")
 contraseña = input("ingrese su contraseña: ")
 
 #PROCESOS
-while nombre != nombre_guardado and contraseña != contraseña_guardada:
+while nombre != nombre_guardado or contraseña != contraseña_guardada:
     validacion = input("el usuario no esta registrado. ¿desea registrarlo?: ")
     
     while not(validacion == "si" or validacion == "no"):
@@ -36,44 +40,66 @@ match opcion:
     case "c":
         print("hola")
     case "d":
-        print("hola")
+        if len(tabla) == 0:
+            print("No hay tablas cargadas.")
+        else:
+            print("--- MOSTRAR ---")
+            print("1 - Mostrar tabla completa")
+            print("2 - Mostrar fila")
+            print("3 - Mostrar columna")
+            print("4 - Filtrar por columna")
+
+            opcion = int(input("Seleccione una opción: "))
+
+            match opcion:
+
+                case 1:
+                    mostrar_tabla(tabla, columnas)
+
+                case 2:
+                    fila = int(input("Ingrese índice de fila: "))
+
+                    if fila >= 0 and fila < len(tabla):
+                        mostrar_fila(tabla, fila)
+                    else:
+                        print("Fila inválida")
+
+                case 3:
+                    columna = int(input("Ingrese índice de columna: "))
+
+                    if columna >= 0 and columna < len(tabla[0]):
+                        mostrar_columna(tabla, columna)
+                    else:
+                        print("Columna inválida")
+
+                case 4:
+                    columna = int(input("Ingrese índice de columna: "))
+                    valor = input("Ingrese valor a buscar: ")
+
+                    if columna >= 0 and columna < len(tabla[0]):
+                        filtrar_columna(tabla, columna, valor)
+                    else:
+                        print("Columna inválida")
+
+                case _:
+                    print("Opción inválida")
     case "e":
-        suma = 0
-        contador = 0
-        producto = 1
-        primero = True
-        seguir = "si"
+        if len(tabla) == 0:
+            print("No hay tabla cargada.")
 
-#arreglar while
-        while seguir == "si":
-            
-            num = int(input("Ingrese un número: "))
-            
-            if primero == True:
-                    maximo = num
-                    minimo = num
-                    primero = False
-            else:
-                if num > maximo:
-                    maximo = num
-                if num < minimo:
-                    minimo = num
-            producto *= num
-            suma += num
-            contador += 1
-            seguir = input("¿Desea ingresar otro número? (si/no): ")
-        
-        promedio_aritmetico = suma / contador
-        promedio_geometrico = producto ** (1/contador)
-        
+        else:
+            columna = int(input("Columna a analizar: "))
 
-        print(
-    f"La suma es: {suma}\n"
-    f"El promedio aritmetico es: {promedio_aritmetico}\n"
-    f"El promedio geometrico es: {promedio_geometrico}\n"
-    f"El conteo es: {contador}\n"
-    f"El maximo es: {maximo}\n"
-    f"El minimo es: {minimo}"
-)
+        if columna < 0 or columna >= len(tabla[0]):
+            print("Columna inválida")
+        else:
+            print("Conteo:", conteo(tabla))
+            print("Máximo:", maximo(tabla, columna))
+            print("Mínimo:", minimo(tabla, columna))
+            print("Promedio aritmético:", promedio_aritmetico(tabla, columna))
+            print("Promedio geométrico:", promedio_geometrico(tabla, columna))
+            print("Medida de dispersión:", medidas_dispersion(tabla, columna))
+            print("Mediana:", medidas_posicion(tabla, columna))
+
     case "f":
         print("fin del programa")
