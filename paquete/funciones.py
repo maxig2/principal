@@ -86,6 +86,34 @@ def es_multiplo(x: int, multiplo: int) -> bool:
         resultado = es_multiplo(x - multiplo, multiplo)
 
     return resultado
+
+def modificar_fila(tabla:list, columnas:list, fila:int)->None:
+    """
+    Modifica todos los datos de una fila de la tabla.
+    Retorna: None
+    """
+
+    for i in range(len(columnas)):
+
+        print("Valor actual:", tabla[fila][i])
+
+        nuevo = input(f"Ingrese nuevo {columnas[i]}: ")
+
+        tabla[fila][i] = nuevo
+
+def modificar_columna(tabla:list,columnas:list,columna:int)->None:
+    """
+    Modifica todos los datos de una columna de la tabla.
+    Retorna: None
+    """
+
+    for i in range(len(tabla)):
+
+        print("Valor actual:",tabla[i][columna])
+
+        nuevo = input( f"Fila {i} - Nuevo {columnas[columna]}: ")
+
+        tabla[i][columna] = nuevo
     
 
 def mostrar_tabla(tabla: list, columnas: list) -> None:
@@ -129,3 +157,4 @@ def filtrar_columna(tabla: list, columna: int, valor: str) -> None:
     for i in range(len(tabla)):
         if tabla[i][columna] == valor:
             print(tabla[i])
+

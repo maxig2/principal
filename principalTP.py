@@ -1,9 +1,11 @@
 from paquete.estadisticas import *
-from paquete.funcione import *
+from paquete.funciones import *
 from paquete.variables import *
 
 nombre_guardado = "Emiliano"
 contraseña_guardada = "1234"
+tabla = []
+columnas = []
 
 #ENTRADAS
 nombre = input("ingrese su nombre: ")
@@ -28,97 +30,123 @@ while nombre != nombre_guardado or contraseña != contraseña_guardada:
     nombre = input("Ingrese su nombre: ")
     contraseña = input("Ingrese su contraseña: ")
 
-menu = print("Menu de opciones:\n(a)Proyectos\n(b)Tablas\n(c)Variables" \
-"\n(d)Mostrar\n(e)Estadisticas\n(f)Salir")
+opcion = ""
 
-opcion = input("Seleccione una opcion: ")
+while opcion != "f":
+    print("Menu de opciones:\n(a)Proyectos\n(b)Tablas\n(c)Variables" \
+    "\n(d)Mostrar\n(e)Estadisticas\n(f)Salir")
 
-match opcion:
-    case "a":
-     print("proyectos")
+    opcion = input("Seleccione una opcion: ")
 
-    case "b":
+    match opcion:
+        case "a":
+            print("proyectos")
 
-        tablas_menu = input("a)crear/cargar una tabla \n" \
-        "b)modificar una tabla \n" \
-        "elija una opcion: ")
+        case "b":
 
-        #while tablas_menu != "a" or tablas_menu != "b":
-        #    tablas_menu = int("parametro invalido,vuelva a intentar")
+            tablas_menu = input("a)crear/cargar una tabla \n" \
+            "b)modificar una tabla \n" \
+            "elija una opcion: ")
 
-        match tablas_menu:
+            #while tablas_menu != "a" or tablas_menu != "b":
+            #    tablas_menu = int("parametro invalido,vuelva a intentar")
 
-            case "a":
+            match tablas_menu:
 
-                creando_tabla = crear_tabla_secuencial()   
+                case "a":
 
-                print("\nTabla final:")
-                for fila in creando_tabla:
-                    print(fila)
+                    creando_tabla = crear_tabla_secuencial()  
+
+                    print("\nTabla final:")
+                    for fila in creando_tabla:
+                        print(fila)
 
 
-    case "c":
-        print("hola")
+        case "c":
+                if len(tabla) == 0:
+                    print("No hay tabla cargada.")
+        
+                else:
+                    opcion_modificar = input("1-Modificar fila\n" "2-Modificar columna\n")
 
-    case "d":
-        if len(tabla) == 0:
-            print("No hay tablas cargadas.")
-        else:
-            print("--- MOSTRAR ---\n" \
-            "1 - Mostrar tabla completa\n2 - Mostrar fila\n" \
-            "3 - Mostrar columna\n4 - Filtrar por columna")
+                    match opcion_modificar:
 
-            opcion = int(input("Seleccione una opción: "))
+                        case "1":
 
-            match opcion:
+                            fila = int( input("Fila: "))
 
-                case 1:
-                    mostrar_tabla(tabla, columnas)
+                            if fila >= 0 and fila < len(tabla):
+                                modificar_fila(tabla,columnas,fila)
+                            else:
+                                print("Fila inválida.")
 
-                case 2:
-                    fila = int(input("Ingrese índice de fila: "))
+                        case "2":
 
-                    if fila >= 0 and fila < len(tabla):
-                        mostrar_fila(tabla, fila)
-                    else:
-                        print("Fila inválida")
+                            columna = int(input("Columna: "))
+                            if columna >= 0 and columna < len(columnas):
+                                modificar_columna(tabla,columnas,columna)
+                            else:
+                                print("Columna inválida.")
 
-                case 3:
-                    columna = int(input("Ingrese índice de columna: "))
+        case "d":
+            if len(tabla) == 0:
+                print("No hay tablas cargadas.")
+            else:
+                print("--- MOSTRAR ---\n" \
+                "1 - Mostrar tabla completa\n2 - Mostrar fila\n" \
+                "3 - Mostrar columna\n4 - Filtrar por columna")
 
-                    if columna >= 0 and columna < len(tabla[0]):
-                        mostrar_columna(tabla, columna)
-                    else:
-                        print("Columna inválida")
+                opcion = int(input("Seleccione una opción: "))
 
-                case 4:
-                    columna = int(input("Ingrese índice de columna: "))
-                    valor = input("Ingrese valor a buscar: ")
+                match opcion:
 
-                    if columna >= 0 and columna < len(tabla[0]):
-                        filtrar_columna(tabla, columna, valor)
-                    else:
-                        print("Columna inválida")
+                    case 1:
+                        mostrar_tabla(tabla, columnas)
 
-                case _:
-                    print("Opción inválida")
-    case "e":
-        if len(tabla) == 0:
-            print("No hay tabla cargada.")
+                    case 2:
+                        fila = int(input("Ingrese índice de fila: "))
 
-        else:
-            columna = int(input("Columna a analizar: "))
+                        if fila >= 0 and fila < len(tabla):
+                            mostrar_fila(tabla, fila)
+                        else:
+                            print("Fila inválida")
 
-        if columna < 0 or columna >= len(tabla[0]):
-            print("Columna inválida")
-        else:
-            print(f"""--- ESTADÍSTICAS DE LA COLUMNA ---
-        Conteo: {conteo(tabla)}
-        Máximo: {maximo(tabla, columna)}
-        Mínimo: {minimo(tabla, columna)}
-        Promedio aritmético: {promedio_aritmetico(tabla, columna)}
-        Promedio geométrico: {promedio_geometrico(tabla, columna)}
-        Medida de dispersión: {medidas_dispersion(tabla, columna)}
-        Mediana: {medidas_posicion(tabla, columna)}""")
-    case "f":
-        print("fin del programa")
+                    case 3:
+                        columna = int(input("Ingrese índice de columna: "))
+
+                        if columna >= 0 and columna < len(tabla[0]):
+                            mostrar_columna(tabla, columna)
+                        else:
+                            print("Columna inválida")
+
+                    case 4:
+                        columna = int(input("Ingrese índice de columna: "))
+                        valor = input("Ingrese valor a buscar: ")
+
+                        if columna >= 0 and columna < len(tabla[0]):
+                            filtrar_columna(tabla, columna, valor)
+                        else:
+                            print("Columna inválida")
+
+                    case _:
+                        print("Opción inválida")
+        case "e":
+            if len(tabla) == 0:
+                print("No hay tabla cargada.")
+
+            else:
+                columna = int(input("Columna a analizar: "))
+
+                if columna < 0 or columna >= len(tabla[0]):
+                    print("Columna inválida")
+                else:
+                    print(f"""--- ESTADÍSTICAS DE LA COLUMNA ---
+            Conteo: {conteo(tabla)}
+            Máximo: {maximo(tabla, columna)}
+            Mínimo: {minimo(tabla, columna)}
+            Promedio aritmético: {promedio_aritmetico(tabla, columna)}
+            Promedio geométrico: {promedio_geometrico(tabla, columna)}
+            Medida de dispersión: {medidas_dispersion(tabla, columna)}
+            Mediana: {medidas_posicion(tabla, columna)}""")
+        case "f":
+            print("fin del programa")
