@@ -3,7 +3,7 @@ from paquete.funcione import *
 from paquete.variables import *
 
 nombre_guardado = "Emiliano"
-contraseña_guardada = 1234
+contraseña_guardada = "1234"
 
 #ENTRADAS
 nombre = input("ingrese su nombre: ")
