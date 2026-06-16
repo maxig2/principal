@@ -32,22 +32,41 @@ menu = print("Menu de opciones:\n(a)Proyectos\n(b)Tablas\n(c)Variables" \
 "\n(d)Mostrar\n(e)Estadisticas\n(f)Salir")
 
 opcion = input("Seleccione una opcion: ")
+
 match opcion:
     case "a":
      print("proyectos")
+
     case "b":
-        print("tablas")
+
+        tablas_menu = input("a)crear/cargar una tabla \n" \
+        "b)modificar una tabla \n" \
+        "elija una opcion: ")
+
+        #while tablas_menu != "a" or tablas_menu != "b":
+        #    tablas_menu = int("parametro invalido,vuelva a intentar")
+
+        match tablas_menu:
+
+            case "a":
+
+                creando_tabla = crear_tabla_secuencial()   
+
+                print("\nTabla final:")
+                for fila in creando_tabla:
+                    print(fila)
+
+
     case "c":
         print("hola")
+
     case "d":
         if len(tabla) == 0:
             print("No hay tablas cargadas.")
         else:
-            print("--- MOSTRAR ---")
-            print("1 - Mostrar tabla completa")
-            print("2 - Mostrar fila")
-            print("3 - Mostrar columna")
-            print("4 - Filtrar por columna")
+            print("--- MOSTRAR ---\n" \
+            "1 - Mostrar tabla completa\n2 - Mostrar fila\n" \
+            "3 - Mostrar columna\n4 - Filtrar por columna")
 
             opcion = int(input("Seleccione una opción: "))
 
@@ -93,13 +112,13 @@ match opcion:
         if columna < 0 or columna >= len(tabla[0]):
             print("Columna inválida")
         else:
-            print("Conteo:", conteo(tabla))
-            print("Máximo:", maximo(tabla, columna))
-            print("Mínimo:", minimo(tabla, columna))
-            print("Promedio aritmético:", promedio_aritmetico(tabla, columna))
-            print("Promedio geométrico:", promedio_geometrico(tabla, columna))
-            print("Medida de dispersión:", medidas_dispersion(tabla, columna))
-            print("Mediana:", medidas_posicion(tabla, columna))
-
+            print(f"""--- ESTADÍSTICAS DE LA COLUMNA ---
+        Conteo: {conteo(tabla)}
+        Máximo: {maximo(tabla, columna)}
+        Mínimo: {minimo(tabla, columna)}
+        Promedio aritmético: {promedio_aritmetico(tabla, columna)}
+        Promedio geométrico: {promedio_geometrico(tabla, columna)}
+        Medida de dispersión: {medidas_dispersion(tabla, columna)}
+        Mediana: {medidas_posicion(tabla, columna)}""")
     case "f":
         print("fin del programa")
