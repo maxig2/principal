@@ -2,34 +2,34 @@ from paquete.estadisticas import *
 from paquete.funciones import *
 from paquete.variables import *
 
-nombre_guardado = "Emiliano"
-contraseña_guardada = "1234"
 tabla = []
 columnas = []
+proyectos = []
+
+proyecto_actual = -1
 
 #ENTRADAS
 nombre = input("ingrese su nombre: ")
 contraseña = input("ingrese su contraseña: ")
 
 #PROCESOS
-while nombre != nombre_guardado or contraseña != contraseña_guardada:
+while not verificar_usuario(nombre, contraseña):
     validacion = input("el usuario no esta registrado. ¿desea registrarlo?: ")
     
-    while not(validacion == "si" or validacion == "no"):
+    while validacion != "si" and validacion != "no":
         validacion = input("ERROR, ingrese 'si' o 'no': ")
 
     if validacion == "si":
 
-        nombre_guardado = input("ingrese en nombre a guardar: ")
-        contraseña_guardada = input("ingrese la contraseña a guardar: ")
+        nombre = input("ingrese el nombre a guardar: ")
+        contraseña = input("ingrese la contraseña a guardar: ")
+
+        guardar_usuario(nombre, contraseña)
+
     else:
-        print("vualva a ingresar el nombre y contraseña") 
         nombre = input("ingrese su nombre: ")
         contraseña = input("ingrese su contraseña: ")
     
-    nombre = input("Ingrese su nombre: ")
-    contraseña = input("Ingrese su contraseña: ")
-
 opcion = ""
 
 while opcion != "f":
@@ -39,8 +39,69 @@ while opcion != "f":
     opcion = input("Seleccione una opcion: ")
 
     match opcion:
+
         case "a":
-            print("proyectos")
+            print("1-crear proyecto")
+            print("2-mostrar proyecto")
+            print("3-seleccionar proyecto")
+            print("4-guardar proyecto")
+            print("5-cargar proyecto")
+
+            opcion_proyecto = input("opcion: ")
+
+            match opcion_proyecto:
+
+                case "1":
+                    nombre = input("Nombre del proyecto: ")
+
+                    proyecto = crear_proyecto(nombre, [], [])
+
+                    agregar_proyecto(proyectos, proyecto)
+
+                    print("Proyecto creado.")
+
+                case "2":
+                   mostrar_proyectos(proyectos)
+
+                case "3":
+                    mostrar_proyectos(proyectos)
+
+                    indice = int(input("proyecto: "))
+
+                    if indice >= 0 and indice < len(proyectos):
+                        proyecto_actual = indice
+
+                        tabla = proyectos[indice]["tabla"]
+                        columnas = proyectos[indice]["columnas"]
+
+                        print("Proyecto seleccionado:",proyectos[indice]["nombre"])
+
+                    else:
+                         print(" proyecto inexistente")
+                
+                case "4":
+                    if proyecto_actual != -1:
+                        guardar_csv(proyectos[proyecto_actual]["tabla"], proyectos[proyecto_actual]["columnas"],"proyecto.csv")
+
+                        print("Proyecto guardado.")
+                    
+                    else:
+                        print("Seleccione un proyecto.")
+
+                case "5":
+                    if proyecto_actual != -1:
+
+                        columnas, tabla = cargar_csv(
+                            "proyecto.csv"
+                        )
+
+                        proyectos[proyecto_actual]["tabla"] = tabla
+                        proyectos[proyecto_actual]["columnas"] = columnas
+
+                        print("Proyecto cargado.")
+
+                    else:
+                            print("Seleccione un proyecto.")
 
         case "b":
 
@@ -55,12 +116,31 @@ while opcion != "f":
 
                 case "a":
 
-                    creando_tabla = crear_tabla_secuencial()  
+                    if proyecto_actual != -1:
 
-                    print("\nTabla final:")
-                    for fila in creando_tabla:
-                        print(fila)
+                        cantidad = int(input("Cantidad de columnas: "))
 
+                        columnas = []
+
+                        for i in range(cantidad):
+                            nombre_columna = input(f"Columna {i+1}: ")
+                            columnas.append(nombre_columna)
+
+                        tabla = crear_tabla_secuencial()
+
+                        proyectos[proyecto_actual]["tabla"] = tabla
+                        proyectos[proyecto_actual]["columnas"] = columnas
+
+                        print("\nTabla final:")
+
+                        for fila in tabla:
+                            print(fila)
+
+                    else:
+                        print("Seleccione un proyecto.")
+                    
+                case "b":
+                    print("La modificación se realiza desde el menú Variables.")
 
         case "c":
                 if len(tabla) == 0:
@@ -96,15 +176,15 @@ while opcion != "f":
                 "1 - Mostrar tabla completa\n2 - Mostrar fila\n" \
                 "3 - Mostrar columna\n4 - Filtrar por columna")
 
-                opcion = int(input("Seleccione una opción: "))
+                opcion_mostrar = int(input("Seleccione una opción: "))
 
-                match opcion:
+                match opcion_mostrar:
 
                     case 1:
                         mostrar_tabla(tabla, columnas)
 
                     case 2:
-                        fila = int(input("Ingrese índice de fila: "))
+                        fila = int(input("Fila: "))
 
                         if fila >= 0 and fila < len(tabla):
                             mostrar_fila(tabla, fila)
@@ -112,9 +192,9 @@ while opcion != "f":
                             print("Fila inválida")
 
                     case 3:
-                        columna = int(input("Ingrese índice de columna: "))
+                        columna = int(input("Columna: "))
 
-                        if columna >= 0 and columna < len(tabla[0]):
+                        if columna >= 0 and columna < len(columnas):
                             mostrar_columna(tabla, columna)
                         else:
                             print("Columna inválida")
@@ -123,7 +203,7 @@ while opcion != "f":
                         columna = int(input("Ingrese índice de columna: "))
                         valor = input("Ingrese valor a buscar: ")
 
-                        if columna >= 0 and columna < len(tabla[0]):
+                        if columna >= 0 and columna < len(columnas):
                             filtrar_columna(tabla, columna, valor)
                         else:
                             print("Columna inválida")
@@ -137,7 +217,7 @@ while opcion != "f":
             else:
                 columna = int(input("Columna a analizar: "))
 
-                if columna < 0 or columna >= len(tabla[0]):
+                if columna < 0 or columna >= len(columnas):
                     print("Columna inválida")
                 else:
                     print(f"""--- ESTADÍSTICAS DE LA COLUMNA ---
@@ -148,5 +228,12 @@ while opcion != "f":
             Promedio geométrico: {promedio_geometrico(tabla, columna)}
             Medida de dispersión: {medidas_dispersion(tabla, columna)}
             Mediana: {medidas_posicion(tabla, columna)}""")
+                    
         case "f":
-            print("fin del programa")
+            if proyecto_actual != -1:
+
+                guardar_csv(proyectos[proyecto_actual]["tabla"],proyectos[proyecto_actual]["columnas"],"proyecto.csv")
+
+                print("Proyecto guardado.")
+
+            print("fin del programa") 

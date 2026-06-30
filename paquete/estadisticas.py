@@ -32,11 +32,13 @@ def maximo(tabla: list, columna: int) -> int:
 
     if validar(tabla, columna):
 
-        resultado = tabla[0][columna]
+        resultado = float(tabla[0][columna])
 
         for i in range(len(tabla)):
-            if tabla[i][columna] > resultado:
-                resultado = tabla[i][columna]
+            valor = float(tabla[i][columna])
+
+            if valor > resultado:
+                resultado = valor
 
     return resultado
 
@@ -48,11 +50,13 @@ def minimo(tabla: list, columna: int) -> int:
     resultado = None
 
     if validar(tabla, columna):
-        resultado = tabla[0][columna]
+        resultado = float(tabla[0][columna])
 
         for i in range(len(tabla)):
-            if tabla[i][columna] < resultado:
-                resultado = tabla[i][columna]
+            valor = float(tabla[i][columna])
+
+            if valor < resultado:
+                resultado = valor
 
     return resultado
 
@@ -67,7 +71,7 @@ def promedio_aritmetico(tabla: list, columna: int) -> float:
         suma = 0
 
         for i in range(len(tabla)):
-            suma += tabla[i][columna]
+            suma += float(tabla[i][columna])
 
         resultado = suma / len(tabla)
 
@@ -84,7 +88,7 @@ def promedio_geometrico(tabla: list, columna: int) -> float:
         producto = 1
 
         for i in range(len(tabla)):
-            producto *= tabla[i][columna]
+            producto *= float(tabla[i][columna])
 
         resultado = producto ** (1 / len(tabla))
 
@@ -135,7 +139,7 @@ def medidas_posicion(tabla: list, columna: int) -> float:
         valores = []
 
         for fila in tabla:
-            valores.append(fila[columna])
+            valores.append(float(fila[columna]))
 
         valores = ordenar_burbujas(valores)
 

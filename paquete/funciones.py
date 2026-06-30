@@ -1,3 +1,32 @@
+def guardar_usuario(nombre:str, contraseña:str):
+
+    archivo = open("usuarios.txt", "a")
+
+    archivo.write(nombre + "," + contraseña + "\n")
+
+    archivo.close()
+
+
+def verificar_usuario(nombre:str, contraseña:str):
+
+    resultado = False
+
+    archivo = open("usuarios.txt", "a")
+    archivo.close()
+
+    archivo = open("usuarios.txt", "r")
+
+    for linea in archivo:
+
+        datos = linea.strip().split(",")
+
+        if datos[0] == nombre and datos[1] == contraseña:
+            resultado = True
+
+    archivo.close()
+
+    return resultado
+
 def es_par(x: int) -> bool:
     """
     Determina si un número es par utilizando recursividad.
@@ -25,6 +54,7 @@ def es_par(x: int) -> bool:
         resultado = es_par(x - 2)
 
     return resultado
+
 def es_primo(numero: int, divisor: int = 2) -> bool:
     """
     Determina si un número es primo utilizando recursividad.
@@ -158,3 +188,76 @@ def filtrar_columna(tabla: list, columna: int, valor: str) -> None:
         if tabla[i][columna] == valor:
             print(tabla[i])
 
+def crear_proyecto(nombre:str,columnas:list,tabla:list)->dict:
+
+    proyecto = {}
+
+    proyecto["nombre"] = nombre
+    proyecto["columnas"] = columnas
+    proyecto["tabla"] = tabla
+
+    return proyecto
+
+def agregar_proyecto(proyectos:list,proyecto:dict)->None:
+        proyectos.append(proyecto)
+
+def mostrar_proyectos(proyectos:list)->None:
+
+    if len(proyectos) == 0:
+        print("No hay proyectos.")
+
+    else:
+        for i in range(len(proyectos)):
+            print(i, "-", proyectos[i]["nombre"])
+
+def guardar_csv(tabla:list, columnas:list, nombre:str)->None:
+
+    archivo = open(nombre, "w")
+
+    # Guardar encabezados
+    linea = ""
+
+    for i in range(len(columnas)):
+
+        linea += columnas[i]
+
+        if i < len(columnas) - 1:
+            linea += ","
+
+    archivo.write(linea + "\n")
+
+    # Guardar filas
+    for i in range(len(tabla)):
+
+        linea = ""
+
+        for j in range(len(tabla[i])):
+
+            linea += str(tabla[i][j])
+
+            if j < len(tabla[i]) - 1:
+                linea += ","
+
+        archivo.write(linea + "\n")
+
+    archivo.close()
+
+def cargar_csv(nombre:str)->tuple:
+
+    archivo = open(nombre, "r")
+
+    lineas = archivo.readlines()
+
+    archivo.close()
+
+    columnas = lineas[0].strip().split(",")
+
+    tabla = []
+
+    for i in range(1, len(lineas)):
+
+        fila = lineas[i].strip().split(",")
+
+        tabla.append(fila)
+
+    return columnas, tabla
