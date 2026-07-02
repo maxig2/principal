@@ -99,6 +99,8 @@ while opcion != "f":
 
                 case "5":
                     if proyecto_actual != -1:
+                        nombre_archivo = proyectos[proyecto_actual]["nombre"] + ".csv"
+                        
                         datos = cargar_csv(nombre_archivo)
 
                         proyectos[proyecto_actual]["tabla"] = datos["tabla"]
