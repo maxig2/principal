@@ -84,7 +84,13 @@ while opcion != "f":
                 
                 case "4":
                     if proyecto_actual != -1:
-                        guardar_csv(proyectos[proyecto_actual]["tabla"], proyectos[proyecto_actual]["columnas"],"proyecto.csv")
+                        nombre_archivo = proyectos[proyecto_actual]["nombre"] + ".csv"
+
+                        guardar_csv(
+                            proyectos[proyecto_actual]["tabla"],
+                              proyectos[proyecto_actual]["columnas"],
+                              nombre_archivo
+                              )
 
                         print("Proyecto guardado.")
                     
@@ -93,13 +99,13 @@ while opcion != "f":
 
                 case "5":
                     if proyecto_actual != -1:
+                        datos = cargar_csv(nombre_archivo)
 
-                        nombre_archivo = proyectos[proyecto_actual]["nombre"] + ".csv"
+                        proyectos[proyecto_actual]["tabla"] = datos["tabla"]
+                        proyectos[proyecto_actual]["columnas"] = datos["columnas"]
 
-                        columnas, tabla = cargar_csv(nombre_archivo)
-
-                        proyectos[proyecto_actual]["tabla"] = tabla
-                        proyectos[proyecto_actual]["columnas"] = columnas
+                        tabla = datos["tabla"]
+                        columnas = datos["columnas"]
 
                         print("Proyecto cargado.")
 

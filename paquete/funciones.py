@@ -1,4 +1,9 @@
-def guardar_usuario(nombre:str, contraseña:str):
+def guardar_usuario(nombre:str, contraseña:str)->None:
+    """
+    Guarda un nuevo usuario en el archivo usuarios.tx
+
+    Retorna:None
+    """
 
     archivo = open("usuarios.txt", "a")
 
@@ -8,6 +13,11 @@ def guardar_usuario(nombre:str, contraseña:str):
 
 
 def verificar_usuario(nombre:str, contraseña:str):
+    """
+    Verifica si un usuario y contraseña existen en usuarios.txt
+
+    Retorna:bool True si existe, False si no existe 
+    """
 
     resultado = False
 
@@ -189,6 +199,11 @@ def filtrar_columna(tabla: list, columna: int, valor: str) -> None:
             print(tabla[i])
 
 def crear_proyecto(nombre:str,columnas:list,tabla:list)->dict:
+    """
+    Crea un diccionario que representa un proyecto.
+
+    Retorna: dict: proyecto creado
+    """
 
     proyecto = {}
 
@@ -199,6 +214,11 @@ def crear_proyecto(nombre:str,columnas:list,tabla:list)->dict:
     return proyecto
 
 def guardar_proyecto(nombre:str)->None:
+    """
+    Guarda el nombre de un proyecto en proyectos.txt
+
+    Retorna:None
+    """
 
     archivo = open("proyectos.txt", "a")
 
@@ -207,9 +227,20 @@ def guardar_proyecto(nombre:str)->None:
     archivo.close()
 
 def agregar_proyecto(proyectos:list,proyecto:dict)->None:
-        proyectos.append(proyecto)
+    """
+    Agrega un proyecto a la lista de proyectos
+
+    Retorna:None
+    """
+         
+    proyectos.append(proyecto)
 
 def cargar_proyectos()->list:
+    """
+    Carga todos los proyectos almacenados en proyectos.txt
+
+    Retorna: list: lista de proyectos
+    """
 
     proyectos = []
 
@@ -231,7 +262,12 @@ def cargar_proyectos()->list:
     return proyectos
 
 def mostrar_proyectos(proyectos:list)->None:
+    """
+    Muestra todos los proyectos disponibles
 
+    Retorna:None
+    """
+     
     if len(proyectos) == 0:
         print("No hay proyectos.")
 
@@ -240,7 +276,12 @@ def mostrar_proyectos(proyectos:list)->None:
             print(i, "-", proyectos[i]["nombre"])
 
 def guardar_csv(tabla:list, columnas:list, nombre:str)->None:
+    """
+    Guarda una tabla en un archivo CSV
 
+    Retorna:None
+    """
+     
     archivo = open(nombre, "w")
 
     # Guardar encabezados
@@ -271,8 +312,14 @@ def guardar_csv(tabla:list, columnas:list, nombre:str)->None:
 
     archivo.close()
 
-def cargar_csv(nombre:str)->tuple:
+def cargar_csv(nombre:str)->dict:
+    """
+    Carga una tabla desde un archivo CSV
 
+    Retorna:dict: diccionario con las claves "columnas" y "tabla"
+    """
+
+    resultado = {}
     archivo = open(nombre, "r")
 
     lineas = archivo.readlines()
@@ -289,4 +336,7 @@ def cargar_csv(nombre:str)->tuple:
 
         tabla.append(fila)
 
-    return columnas, tabla
+    resultado["columnas"] = columnas
+    resultado["tabla"] = tabla
+
+    return resultado
