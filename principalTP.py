@@ -4,9 +4,9 @@ from paquete.variables import *
 
 tabla = []
 columnas = []
-proyectos = []
+proyectos = cargar_proyectos()
 
-archivo_actual = -1
+proyecto_actual  = -1
 
 #ENTRADAS
 nombre = input("ingrese su nombre: ")
@@ -59,6 +59,8 @@ while opcion != "f":
 
                     agregar_proyecto(proyectos, proyecto)
 
+                    guardar_proyecto(nombre)
+
                     print("Proyecto creado.")
 
                 case "2":
@@ -92,9 +94,9 @@ while opcion != "f":
                 case "5":
                     if proyecto_actual != -1:
 
-                        columnas, tabla = cargar_csv(
-                            "proyecto.csv"
-                        )
+                        nombre_archivo = proyectos[proyecto_actual]["nombre"] + ".csv"
+
+                        columnas, tabla = cargar_csv(nombre_archivo)
 
                         proyectos[proyecto_actual]["tabla"] = tabla
                         proyectos[proyecto_actual]["columnas"] = columnas

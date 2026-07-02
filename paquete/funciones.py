@@ -198,8 +198,37 @@ def crear_proyecto(nombre:str,columnas:list,tabla:list)->dict:
 
     return proyecto
 
+def guardar_proyecto(nombre:str)->None:
+
+    archivo = open("proyectos.txt", "a")
+
+    archivo.write(nombre + "\n")
+
+    archivo.close()
+
 def agregar_proyecto(proyectos:list,proyecto:dict)->None:
         proyectos.append(proyecto)
+
+def cargar_proyectos()->list:
+
+    proyectos = []
+
+    archivo = open("proyectos.txt", "a")
+    archivo.close()
+
+    archivo = open("proyectos.txt","r")
+
+    for linea in archivo:
+
+        nombre = linea.strip()
+
+        proyecto = crear_proyecto(nombre, [], [])
+
+        proyectos.append(proyecto)
+
+    archivo.close()
+
+    return proyectos
 
 def mostrar_proyectos(proyectos:list)->None:
 
