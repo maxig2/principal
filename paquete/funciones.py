@@ -12,7 +12,7 @@ def guardar_usuario(nombre:str, contraseña:str)->None:
     archivo.close()
 
 
-def verificar_usuario(nombre:str, contraseña:str):
+def verificar_usuario(nombre:str, contraseña:str)->bool:
     """
     Verifica si un usuario y contraseña existen en usuarios.txt
 
@@ -127,78 +127,108 @@ def es_multiplo(x: int, multiplo: int) -> bool:
 
     return resultado
 
-def modificar_fila(tabla:list, columnas:list, fila:int)->None:
+def modificar_fila(tabla:dict, fila:int)->None:
     """
     Modifica todos los datos de una fila de la tabla.
     Retorna: None
     """
 
+    columnas = tabla["columnas"]
+    datos = tabla["datos"]
+
     for i in range(len(columnas)):
 
-        print("Valor actual:", tabla[fila][i])
+        print("Valor actual:", datos[fila][i])
 
-        nuevo = input(f"Ingrese nuevo {columnas[i]}: ")
+        datos[fila][i] = input(f"Ingrese nuevo {columnas[i]}: ")
 
-        tabla[fila][i] = nuevo
-
-def modificar_columna(tabla:list,columnas:list,columna:int)->None:
+def modificar_columna(tabla:dict,columna:int)->None:
     """
     Modifica todos los datos de una columna de la tabla.
     Retorna: None
     """
 
-    for i in range(len(tabla)):
+    columnas = tabla["columnas"]
+    datos = tabla["datos"]
 
-        print("Valor actual:",tabla[i][columna])
+    for i in range(len(datos)):
 
-        nuevo = input( f"Fila {i} - Nuevo {columnas[columna]}: ")
+        print("Valor actual:",datos[i][columna])
 
-        tabla[i][columna] = nuevo
+        datos[i][columna] = input(f"Fila {i} - Nuevo {columnas[columna]}: ")
     
 
-def mostrar_tabla(tabla: list, columnas: list) -> None:
+def mostrar_tabla(tabla: dict)->None:
     """
-    Muestra una tabla completa con encabezados.
+    Muestra una tabla completa
+     Retorna: None
     """
+
+    columnas = tabla["columnas"]
+    datos = tabla["datos"]
 
     for i in range(len(columnas)):
         print(columnas[i], end="\t")
 
     print()
 
-    for i in range(len(tabla)):
-        for j in range(len(tabla[i])):
-            print(tabla[i][j], end="\t")
+    for i in range(len(datos)):
+        for j in range(len(datos[i])):
+            print(datos[i][j], end="\t")
+
         print()
 
-def mostrar_columna(tabla: list, columna: int) -> None:
+def mostrar_columna(tabla: dict, columna: int)->None:
     """
     Muestra una columna específica de una tabla.
     """
 
-    for i in range(len(tabla)):
-        print(tabla[i][columna])
+    datos = tabla["datos"]
 
-def mostrar_fila(tabla: list, fila: int) -> None:
+    for i in range(len(datos)):
+        print(datos[i][columna])
+
+def mostrar_fila(tabla: dict, fila: int)->None:
     """
     Muestra una fila específica de una tabla.
     """
 
-    for i in range(len(tabla[fila])):
-        print(tabla[fila][i], end="\t")
+    datos = tabla["datos"]
+
+    for i in range(len(datos[fila])):
+        print(datos[fila][i], end="\t")
 
     print()
 
-def filtrar_columna(tabla: list, columna: int, valor: str) -> None:
+def filtrar_columna(tabla: dict, columna: int, valor: str)->None:
     """
-    Filtra e imprime las filas donde una columna coincide con un valor.
+    Filtra e imprime las filas donde una columna coincide con un valor
+    Retorna: None
     """
 
-    for i in range(len(tabla)):
-        if tabla[i][columna] == valor:
-            print(tabla[i])
+    datos = tabla["datos"]
 
-def crear_proyecto(nombre:str,columnas:list,tabla:list)->dict:
+    for i in range(len(datos)):
+        if datos[i][columna] == valor:
+            print(datos[i])
+
+def existe_proyecto(proyectos: list, nombre: str)->bool:
+    """
+    Verifica si ya existe un proyecto con ese nombre.
+
+    Retorna: bool: True si el proyecto existe, False en caso contrario.
+    """
+
+    resultado = False
+
+    for i in range(len(proyectos)):
+
+        if proyectos[i]["nombre"] == nombre:
+            resultado = True
+
+    return resultado
+
+def crear_proyecto(nombre:str)->dict:
     """
     Crea un diccionario que representa un proyecto.
 
@@ -208,8 +238,7 @@ def crear_proyecto(nombre:str,columnas:list,tabla:list)->dict:
     proyecto = {}
 
     proyecto["nombre"] = nombre
-    proyecto["columnas"] = columnas
-    proyecto["tabla"] = tabla
+    proyecto["tablas"] = []
 
     return proyecto
 
@@ -253,7 +282,7 @@ def cargar_proyectos()->list:
 
         nombre = linea.strip()
 
-        proyecto = crear_proyecto(nombre, [], [])
+        proyecto = crear_proyecto(nombre)
 
         proyectos.append(proyecto)
 
@@ -275,12 +304,15 @@ def mostrar_proyectos(proyectos:list)->None:
         for i in range(len(proyectos)):
             print(i, "-", proyectos[i]["nombre"])
 
-def guardar_csv(tabla:list, columnas:list, nombre:str)->None:
+def guardar_csv(tabla:dict, nombre:str)->None:
     """
     Guarda una tabla en un archivo CSV
 
     Retorna:None
     """
+
+    columnas = tabla["columnas"]
+    datos = tabla["datos"]
      
     archivo = open(nombre, "w")
 
@@ -297,15 +329,15 @@ def guardar_csv(tabla:list, columnas:list, nombre:str)->None:
     archivo.write(linea + "\n")
 
     # Guardar filas
-    for i in range(len(tabla)):
+    for i in range(len(datos)):
 
         linea = ""
 
-        for j in range(len(tabla[i])):
+        for j in range(len(datos[i])):
 
-            linea += str(tabla[i][j])
+            linea += str(datos[i][j])
 
-            if j < len(tabla[i]) - 1:
+            if j < len(datos[i]) - 1:
                 linea += ","
 
         archivo.write(linea + "\n")
@@ -328,15 +360,166 @@ def cargar_csv(nombre:str)->dict:
 
     columnas = lineas[0].strip().split(",")
 
-    tabla = []
+    datos = []
 
     for i in range(1, len(lineas)):
 
         fila = lineas[i].strip().split(",")
 
-        tabla.append(fila)
+        datos.append(fila)
 
     resultado["columnas"] = columnas
-    resultado["tabla"] = tabla
+    resultado["datos"] = datos
 
     return resultado
+
+def crear_tabla(nombre:str, columnas:list, datos:list)->dict:
+    """
+    Crea una tabla.
+
+    Retorna: dict
+    """
+
+    tabla = {}
+
+    tabla["nombre"] = nombre
+    tabla["columnas"] = columnas
+    tabla["datos"] = datos
+
+    return tabla
+
+def agregar_tabla(proyecto:dict, tabla:dict)->None:
+    """
+    Agrega una tabla a un proyecto.
+
+    Retorna: None
+    """
+
+    proyecto["tablas"].append(tabla)
+
+def eliminar_tabla(proyecto:dict,indice:int)->None:
+    """
+    Elimina una tabla de un proyecto.
+
+    Retorna: None
+    """
+
+    proyecto["tablas"].pop(indice)
+
+def seleccionar_tabla(tablas:list)->int:
+    """
+    Muestra las tablas disponibles.
+
+    Retorna:
+        índice elegido
+    """
+
+    indice = -1
+
+    if len(tablas)==0:
+
+        print("No hay tablas.")
+
+    else:
+
+        for i in range(len(tablas)):
+
+            print(i,"-",tablas[i]["nombre"])
+
+        indice=int(input("Tabla: "))
+
+        while indice < 0 or indice >= len(tablas):
+
+            indice = int(input("Índice inválido. Tabla: "))
+
+    return indice
+
+def agregar_fila(tabla:dict)->None:
+    """
+    Agrega una fila.
+
+    Retorna: None
+    """
+
+    columnas = tabla["columnas"]
+    datos = tabla["datos"]
+
+    fila=[]
+
+    for i in range(len(columnas)):
+
+        valor=input(f"{columnas[i]}: ")
+
+        fila.append(valor)
+
+    datos.append(fila)
+
+def agregar_columna(tabla:dict)->None:
+    """
+    Agrega una columna.
+
+    Retorna: None
+    """
+
+    columnas = tabla["columnas"]
+    datos = tabla["datos"]
+
+    nombre=input("Nombre de la columna: ")
+
+    columnas.append(nombre)
+
+    for i in range(len(datos)):
+
+        valor=input(f"Fila {i}: ")
+
+        datos[i].append(valor)
+
+def guardar_tablas(nombre_proyecto:str, tablas:list)->None:
+    """
+    Guarda los nombres de las tablas de un proyecto.
+
+    Retorna: None
+    """
+
+    archivo = open(nombre_proyecto + "_tablas.txt", "w")
+
+    for tabla in tablas:
+        archivo.write(tabla["nombre"] + "\n")
+
+    archivo.close()
+
+def cargar_tablas(nombre_proyecto:str)->list:
+    """
+    Carga las tablas de un proyecto.
+
+    Retorna: list
+    """
+
+    tablas = []
+
+    nombre_archivo = nombre_proyecto + "_tablas.txt"
+
+    archivo = open(nombre_archivo, "a")
+    archivo.close()
+
+    archivo = open(nombre_archivo, "r")
+
+    for linea in archivo:
+
+        nombre_tabla = linea.strip()
+
+        nombre_csv = nombre_proyecto + "_" + nombre_tabla + ".csv"
+
+        datos = cargar_csv(nombre_csv)
+
+        tabla = crear_tabla(
+            nombre_tabla,
+            datos["columnas"],
+            datos["datos"]
+        )
+
+        tablas.append(tabla)
+
+    archivo.close()
+
+    return tablas

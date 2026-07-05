@@ -2,8 +2,7 @@ from paquete.estadisticas import *
 from paquete.funciones import *
 from paquete.variables import *
 
-tabla = []
-columnas = []
+
 proyectos = cargar_proyectos()
 
 proyecto_actual  = -1
@@ -45,8 +44,7 @@ while opcion != "f":
             print("1)-crear proyecto:" \
             "\n2)-mostrar proyecto:" \
             "\n3)-seleccionar proyecto:" \
-            "\n4)-guardar proyecto:" \
-            "\n5)-cargar proyecto")
+            "\n4)-guardar proyecto:")
 
             opcion_proyecto = input("opcion: ")
 
@@ -55,13 +53,19 @@ while opcion != "f":
                 case "1":
                     nombre = input("Nombre del proyecto: ")
 
-                    proyecto = crear_proyecto(nombre, [], [])
+                    if existe_proyecto(proyectos, nombre):
+                        print("Ese proyecto ya existe.")
+                    
+                    else:
+                        proyecto = crear_proyecto(nombre)
 
-                    agregar_proyecto(proyectos, proyecto)
+                        agregar_proyecto(proyectos, proyecto)
 
-                    guardar_proyecto(nombre)
+                        guardar_proyecto(nombre)
 
-                    print("Proyecto creado.")
+                        guardar_tablas(nombre, [])
+
+                        print("Proyecto creado.")
 
                 case "2":
                    mostrar_proyectos(proyectos)
@@ -69,55 +73,52 @@ while opcion != "f":
                 case "3":
                     mostrar_proyectos(proyectos)
 
-                    indice = int(input("proyecto: "))
+                    indice = int(input("Proyecto: "))
 
                     if indice >= 0 and indice < len(proyectos):
+
                         proyecto_actual = indice
+                        proyecto = proyectos[proyecto_actual]
 
-                        tabla = proyectos[indice]["tabla"]
-                        columnas = proyectos[indice]["columnas"]
+                        proyecto["tablas"] = cargar_tablas(proyecto["nombre"])
 
-                        print("Proyecto seleccionado:",proyectos[indice]["nombre"])
+                        print("Proyecto seleccionado:", proyecto["nombre"])
 
                     else:
-                         print(" proyecto inexistente")
+                        print("Proyecto inexistente.")
                 
                 case "4":
                     if proyecto_actual != -1:
-                        nombre_archivo = proyectos[proyecto_actual]["nombre"] + ".csv"
+                        proyecto = proyectos[proyecto_actual]
 
-                        guardar_csv(
-                            proyectos[proyecto_actual]["tabla"],
-                              proyectos[proyecto_actual]["columnas"],
-                              nombre_archivo
-                              )
+                        guardar_tablas(
+                            proyecto["nombre"],
+                            proyecto["tablas"]
+                    )
+
+                        for tabla in proyecto["tablas"]:
+
+                            nombre_archivo = (
+                                proyecto["nombre"] +
+                                "_" +
+                                tabla["nombre"] +
+                                ".csv"
+                            )
+
+                            guardar_csv(
+                                tabla,
+                                nombre_archivo
+                                )
 
                         print("Proyecto guardado.")
                     
                     else:
                         print("Seleccione un proyecto.")
-
-                case "5":
-                    if proyecto_actual != -1:
-                        nombre_archivo = proyectos[proyecto_actual]["nombre"] + ".csv"
                         
-                        datos = cargar_csv(nombre_archivo)
-
-                        proyectos[proyecto_actual]["tabla"] = datos["tabla"]
-                        proyectos[proyecto_actual]["columnas"] = datos["columnas"]
-
-                        tabla = datos["tabla"]
-                        columnas = datos["columnas"]
-
-                        print("Proyecto cargado.")
-
-                    else:
-                            print("Seleccione un proyecto.")
-
         case "b":
 
             tablas_menu = input("a)crear/cargar una tabla \n" \
-            "b)modificar una tabla \n" \
+            "b)eliminar tabla \n" \
             "elija una opcion: ")
 
             #while tablas_menu != "a" or tablas_menu != "b":
@@ -129,127 +130,266 @@ while opcion != "f":
 
                     if proyecto_actual != -1:
 
+                        nombre_tabla = input("Nombre de la tabla: ")
+
                         cantidad = int(input("Cantidad de columnas: "))
 
                         columnas = []
 
                         for i in range(cantidad):
                             nombre_columna = input(f"Columna {i+1}: ")
+
                             columnas.append(nombre_columna)
 
-                        tabla = crear_tabla_secuencial()
+                        tabla = crear_tabla(nombre_tabla, columnas, [])
 
-                        proyectos[proyecto_actual]["tabla"] = tabla
-                        proyectos[proyecto_actual]["columnas"] = columnas
+                        agregar_tabla(proyectos[proyecto_actual], tabla)
 
-                        print("\nTabla final:")
+                        guardar_tablas(
+                            proyectos[proyecto_actual]["nombre"],
+                            proyectos[proyecto_actual]["tablas"]
+                    )
 
-                        for fila in tabla:
-                            print(fila)
+                        print("tabla creada ")
 
                     else:
                         print("Seleccione un proyecto.")
                     
                 case "b":
-                    print("La modificación se realiza desde el menú Variables.")
+                    if proyecto_actual != -1:
+
+                        proyecto = proyectos[proyecto_actual]
+
+                        indice = seleccionar_tabla(proyecto["tablas"])
+
+                        if indice != -1:
+
+                            eliminar_tabla(proyecto, indice)
+
+                            guardar_tablas(
+                                proyecto["nombre"],
+                                proyecto["tablas"]
+                        )
+
+                            print("Tabla eliminada.")
 
         case "c":
-                if len(tabla) == 0:
-                    print("No hay tabla cargada.")
+                if proyecto_actual == -1:
+                    print("Seleccione un proyecto.")
         
                 else:
-                    opcion_modificar = input("1-Modificar fila\n" "2-Modificar columna\n")
+                    proyecto = proyectos[proyecto_actual]
 
-                    match opcion_modificar:
+                    indice = seleccionar_tabla(proyecto["tablas"])
+
+                    if indice != -1:
+
+                        tabla = proyecto["tablas"][indice]
+
+                        opcion_modificar = input(
+                        "1-Modificar fila\n"
+                        "2-Modificar columna\n"
+                        "3-Agregar fila\n"
+                        "4-Agregar columna\n"
+                    )
+
+                        match opcion_modificar:
+
+                            case "1":
+
+                                fila = int( input("Fila: "))
+
+                                if fila >= 0 and fila < len(tabla["datos"]):
+                                    modificar_fila(tabla, fila)
+                                    
+                                    nombre_archivo = (
+                                        proyecto["nombre"] +
+                                        "_" +
+                                        tabla["nombre"] +
+                                        ".csv"
+                                )
+                                    
+                                    guardar_tablas(
+                                    proyecto["nombre"],
+                                    proyecto["tablas"]
+                                )
+
+                                    guardar_csv(
+                                        tabla,
+                                        nombre_archivo
+                                    )
+                                else:
+                                    print("Fila inválida.")
+
+                            case "2":
+
+                                columna = int(input("Columna: "))
+
+                                if columna >= 0 and columna < len(tabla["columnas"]):
+                                    modificar_columna(tabla, columna)
+                                    
+                                    nombre_archivo = (
+                                        proyecto["nombre"] +
+                                        "_" +
+                                        tabla["nombre"] +
+                                        ".csv"
+                                )
+                                    
+                                    guardar_tablas(
+                                    proyecto["nombre"],
+                                    proyecto["tablas"]
+                                )
+
+                                    guardar_csv(
+                                    tabla,
+                                    nombre_archivo
+                                    )
+
+                                else:
+                                    print("Columna inválida.")
+
+                            case "3":
+                                agregar_fila(tabla)
+
+                                nombre_archivo = (
+                                    proyecto["nombre"] +
+                                    "_" +
+                                    tabla["nombre"] +
+                                    ".csv"
+                                )
+
+                                guardar_tablas(
+                                    proyecto["nombre"],
+                                    proyecto["tablas"]
+                                )
+
+                                guardar_csv(
+                                    tabla,
+                                    nombre_archivo
+                                )
+                            
+                            case "4":
+                                agregar_columna(tabla)
+
+                                nombre_archivo = (
+                                    proyecto["nombre"] +
+                                    "_" +
+                                    tabla["nombre"] +
+                                    ".csv"
+                                )
+
+                                guardar_tablas(
+                                    proyecto["nombre"],
+                                    proyecto["tablas"]
+                                )
+
+                                guardar_csv(
+                                    tabla,
+                                    nombre_archivo
+                                )
+                     
+        case "d":
+            if proyecto_actual == -1:
+                print("Seleccione un proyecto.")
+
+            else:
+                proyecto = proyectos[proyecto_actual]
+
+                indice = seleccionar_tabla(proyecto["tablas"])
+
+                if indice != -1:
+
+                    tabla = proyecto["tablas"][indice]
+
+                    print("--- MOSTRAR ---\n" \
+                    "1 - Mostrar tabla completa\n2 - Mostrar fila\n" \
+                    "3 - Mostrar columna\n4 - Filtrar por columna")
+
+                    opcion_mostrar = input("Seleccione una opción: ")
+
+                    match opcion_mostrar:
 
                         case "1":
+                            mostrar_tabla(tabla)
 
-                            fila = int( input("Fila: "))
+                        case "2":
+                            fila = int(input("Fila: "))
 
-                            if fila >= 0 and fila < len(tabla):
-                                modificar_fila(tabla,columnas,fila)
+                            if fila >= 0 and fila < len(tabla["datos"]):
+                                mostrar_fila(tabla, fila)
                             else:
                                 print("Fila inválida.")
 
-                        case "2":
-
+                        case "3":
                             columna = int(input("Columna: "))
-                            if columna >= 0 and columna < len(columnas):
-                                modificar_columna(tabla,columnas,columna)
+
+                            if columna  >= 0 and columna  < len(tabla["columnas"]):
+                                mostrar_columna(tabla, columna)
                             else:
-                                print("Columna inválida.")
-                     
-        case "d":
-            if len(tabla) == 0:
-                print("No hay tablas cargadas.")
-            else:
-                print("--- MOSTRAR ---\n" \
-                "1 - Mostrar tabla completa\n2 - Mostrar fila\n" \
-                "3 - Mostrar columna\n4 - Filtrar por columna")
+                                print("columna inválida.")
 
-                opcion_mostrar = int(input("Seleccione una opción: "))
+                        case "4":
+                            columna = int(input("Columna: "))
 
-                match opcion_mostrar:
+                            if columna >= 0 and columna < len(tabla["columnas"]):
+                                valor = input("Valor: ")
 
-                    case 1:
-                        mostrar_tabla(tabla, columnas)
-
-                    case 2:
-                        fila = int(input("Fila: "))
-
-                        if fila >= 0 and fila < len(tabla):
-                            mostrar_fila(tabla, fila)
-                        else:
-                            print("Fila inválida")
-
-                    case 3:
-                        columna = int(input("Columna: "))
-
-                        if columna >= 0 and columna < len(columnas):
-                            mostrar_columna(tabla, columna)
-                        else:
-                            print("Columna inválida")
-
-                    case 4:
-                        columna = int(input("Ingrese índice de columna: "))
-                        valor = input("Ingrese valor a buscar: ")
-
-                        if columna >= 0 and columna < len(columnas):
-                            filtrar_columna(tabla, columna, valor)
-                        else:
-                            print("Columna inválida")
-
-                    case _:
-                        print("Opción inválida")
+                                filtrar_columna(tabla, columna, valor)
+                            
+                            else:
+                                 print("Columna inválida.")
         case "e":
-            if len(tabla) == 0:
-                print("No hay tabla cargada.")
+            if proyecto_actual == -1:
+                print("Seleccione un proyecto.")
 
             else:
-                columna = int(input("Columna a analizar: "))
+                proyecto = proyectos[proyecto_actual]
 
-                if columna < 0 or columna >= len(columnas):
-                    print("Columna inválida")
-                else:
-                    print(f"""--- ESTADÍSTICAS DE LA COLUMNA ---
-            Conteo: {conteo(tabla)}
-            Máximo: {maximo(tabla, columna)}
-            Mínimo: {minimo(tabla, columna)}
-            Promedio aritmético: {promedio_aritmetico(tabla, columna)}
-            Promedio geométrico: {promedio_geometrico(tabla, columna)}
-            Medida de dispersión: {medidas_dispersion(tabla, columna)}
-            Mediana: {medidas_posicion(tabla, columna)}""")
+                indice = seleccionar_tabla(proyecto["tablas"])
+
+                if indice != -1:
+
+                    tabla = proyecto["tablas"][indice]
+
+                    columna = int(input("Columna: "))
+
+                    if columna >= 0 and columna < len(tabla["columnas"]):
+
+                        print(f"""
+                        Conteo: {conteo(tabla["datos"])}
+                        Máximo: {maximo(tabla["datos"], columna)}
+                        Mínimo: {minimo(tabla["datos"], columna)}
+                        Promedio: {promedio_aritmetico(tabla["datos"], columna)}
+                        Promedio geométrico: {promedio_geometrico(tabla["datos"], columna)}
+                        Dispersión: {medidas_dispersion(tabla["datos"], columna)}
+                        Mediana: {medidas_posicion(tabla["datos"], columna)}
+                        """)
+
+                    else:
+                        print("Columna inválida.")
                     
         case "f":
             if proyecto_actual != -1:
 
-               nombre_archivo = proyectos[proyecto_actual]["nombre"] + ".csv"
+                proyecto = proyectos[proyecto_actual]
 
-               guardar_csv(
-                     proyectos[proyecto_actual]["tabla"],
-                     proyectos[proyecto_actual]["columnas"],
-                     nombre_archivo
+                for tabla in proyecto["tablas"]:
+
+                    nombre_archivo = (
+                        proyecto["nombre"] +
+                        "_" +
+                        tabla["nombre"] +
+                        ".csv"
                 )
+                    guardar_tablas(
+                        proyecto["nombre"],
+                        proyecto["tablas"]
+                )
+
+                    guardar_csv(
+                        tabla,
+                        nombre_archivo
+                    )
 
 print("Proyecto guardado.")
 print("fin del programa") 
