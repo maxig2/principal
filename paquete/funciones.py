@@ -103,6 +103,30 @@ def validar_rango(numero: int, minimo: int, maximo: int) -> bool:
 
     return resultado
 
+def solicitar_entero(mensaje: str) -> int:
+    """
+    Solicita un número entero al usuario
+    """
+
+    numero = input(mensaje)
+
+    while numero.isdigit() == False:
+        numero = input("Error. Ingrese un número: ")
+
+    return int(numero)
+
+def solicitar_texto(mensaje: str) -> str:
+    """
+    Solicita un texto no vacío.
+    """
+
+    texto = input(mensaje)
+
+    while texto.strip() == "":
+        texto = input("Error. No puede estar vacio: ")
+
+    return texto
+
 def es_multiplo(x: int, multiplo: int) -> bool:
     """
     Determina si un número es múltiplo de otro utilizando recursividad.

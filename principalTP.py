@@ -8,7 +8,7 @@ proyectos = cargar_proyectos()
 proyecto_actual  = -1
 
 #ENTRADAS
-nombre = input("ingrese su nombre: ")
+nombre = solicitar_texto("ingrese su nombre: ")
 contraseña = input("ingrese su contraseña: ")
 
 #PROCESOS
@@ -38,6 +38,9 @@ while opcion != "f":
 
     opcion = input("Seleccione una opcion: ")
 
+    while opcion not in ["a","b","c","d","e","f"]:
+        opcion = input("Opción inválida: ")
+
     match opcion:
 
         case "a":
@@ -48,10 +51,13 @@ while opcion != "f":
 
             opcion_proyecto = input("opcion: ")
 
+            while opcion_proyecto not in ["1","2","3","4"]:
+                opcion_proyecto = input("Opción inválida: ")
+
             match opcion_proyecto:
 
                 case "1":
-                    nombre = input("Nombre del proyecto: ")
+                    nombre = solicitar_texto("Nombre del proyecto: ")
 
                     if existe_proyecto(proyectos, nombre):
                         print("Ese proyecto ya existe.")
@@ -73,7 +79,7 @@ while opcion != "f":
                 case "3":
                     mostrar_proyectos(proyectos)
 
-                    indice = int(input("Proyecto: "))
+                    indice = solicitar_entero("Proyecto: ")
 
                     if indice >= 0 and indice < len(proyectos):
 
@@ -121,6 +127,9 @@ while opcion != "f":
             "b)eliminar tabla \n" \
             "elija una opcion: ")
 
+            while tablas_menu not in ["a", "b"]:
+                tablas_menu = input("Opción inválida: ")
+
             #while tablas_menu != "a" or tablas_menu != "b":
             #    tablas_menu = int("parametro invalido,vuelva a intentar")
 
@@ -130,14 +139,14 @@ while opcion != "f":
 
                     if proyecto_actual != -1:
 
-                        nombre_tabla = input("Nombre de la tabla: ")
+                        nombre_tabla = solicitar_texto("Nombre de la tabla: ")
 
-                        cantidad = int(input("Cantidad de columnas: "))
+                        cantidad = solicitar_entero("Cantidad de columnas: ")
 
                         columnas = []
 
                         for i in range(cantidad):
-                            nombre_columna = input(f"Columna {i+1}: ")
+                            nombre_columna = solicitar_texto(f"Columna {i+1}: ")
 
                             columnas.append(nombre_columna)
 
@@ -192,14 +201,17 @@ while opcion != "f":
                         "3-Agregar fila\n"
                         "4-Agregar columna\n"
                     )
+                        
+                        while opcion_modificar not in ["1", "2", "3", "4"]:
+                            opcion_modificar = input("Opción inválida: ")
 
                         match opcion_modificar:
 
                             case "1":
 
-                                fila = int( input("Fila: "))
+                                fila = solicitar_entero("Fila: ")
 
-                                if fila >= 0 and fila < len(tabla["datos"]):
+                                if validar_rango(fila, 0, len(tabla["datos"]) - 1):
                                     modificar_fila(tabla, fila)
                                     
                                     nombre_archivo = (
@@ -223,9 +235,9 @@ while opcion != "f":
 
                             case "2":
 
-                                columna = int(input("Columna: "))
+                                columna = solicitar_entero("Columna: ")
 
-                                if columna >= 0 and columna < len(tabla["columnas"]):
+                                if validar_rango(columna, 0, len(tabla["columnas"]) - 1):
                                     modificar_columna(tabla, columna)
                                     
                                     nombre_archivo = (
@@ -307,13 +319,16 @@ while opcion != "f":
 
                     opcion_mostrar = input("Seleccione una opción: ")
 
+                    while opcion_mostrar not in ["1","2","3","4"]:
+                        opcion_mostrar = input("Opción inválida: ")
+
                     match opcion_mostrar:
 
                         case "1":
                             mostrar_tabla(tabla)
 
                         case "2":
-                            fila = int(input("Fila: "))
+                            fila = solicitar_entero("Fila: ")
 
                             if fila >= 0 and fila < len(tabla["datos"]):
                                 mostrar_fila(tabla, fila)
@@ -321,7 +336,7 @@ while opcion != "f":
                                 print("Fila inválida.")
 
                         case "3":
-                            columna = int(input("Columna: "))
+                            columna = solicitar_entero("Columna: ")
 
                             if columna  >= 0 and columna  < len(tabla["columnas"]):
                                 mostrar_columna(tabla, columna)
@@ -329,10 +344,10 @@ while opcion != "f":
                                 print("columna inválida.")
 
                         case "4":
-                            columna = int(input("Columna: "))
+                            columna = solicitar_entero("Columna: ")
 
                             if columna >= 0 and columna < len(tabla["columnas"]):
-                                valor = input("Valor: ")
+                                valor = solicitar_texto("Valor: ")
 
                                 filtrar_columna(tabla, columna, valor)
                             
@@ -351,7 +366,7 @@ while opcion != "f":
 
                     tabla = proyecto["tablas"][indice]
 
-                    columna = int(input("Columna: "))
+                    columna = solicitar_entero("Columna: ")
 
                     if columna >= 0 and columna < len(tabla["columnas"]):
 
