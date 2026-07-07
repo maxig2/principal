@@ -595,7 +595,7 @@ def cargar_tablas(nombre_proyecto:str)->list:
               datos["datos"]
             )
 
-        tablas.append(tabla)
+           tablas.append(tabla)
 
     archivo.close()
 
