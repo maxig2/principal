@@ -103,6 +103,17 @@ def validar_rango(numero: int, minimo: int, maximo: int) -> bool:
 
     return resultado
 
+def es_entero(texto: str) -> bool:
+
+    if texto == "":
+        return False
+
+    for caracter in texto:
+        if caracter < "0" or caracter > "9":
+            return False
+
+    return True
+
 def solicitar_entero(mensaje: str) -> int:
     """
     Solicita un número entero al usuario
@@ -110,7 +121,7 @@ def solicitar_entero(mensaje: str) -> int:
 
     numero = input(mensaje)
 
-    while numero.isdigit() == False:
+    while es_entero(numero) == False:
         numero = input("Error. Ingrese un número: ")
 
     return int(numero)
@@ -376,6 +387,7 @@ def cargar_csv(nombre:str)->dict:
     """
 
     resultado = {}
+
     archivo = open(nombre, "r")
 
     lineas = archivo.readlines()

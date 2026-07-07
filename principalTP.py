@@ -81,7 +81,7 @@ while opcion != "f":
 
                     indice = solicitar_entero("Proyecto: ")
 
-                    if indice >= 0 and indice < len(proyectos):
+                    if validar_rango(indice, 0, len(proyectos) - 1):
 
                         proyecto_actual = indice
                         proyecto = proyectos[proyecto_actual]
@@ -330,7 +330,7 @@ while opcion != "f":
                         case "2":
                             fila = solicitar_entero("Fila: ")
 
-                            if fila >= 0 and fila < len(tabla["datos"]):
+                            if validar_rango(fila, 0, len(tabla["datos"]) - 1):
                                 mostrar_fila(tabla, fila)
                             else:
                                 print("Fila inválida.")
@@ -338,7 +338,7 @@ while opcion != "f":
                         case "3":
                             columna = solicitar_entero("Columna: ")
 
-                            if columna  >= 0 and columna  < len(tabla["columnas"]):
+                            if validar_rango(columna, 0, len(tabla["columnas"]) - 1):
                                 mostrar_columna(tabla, columna)
                             else:
                                 print("columna inválida.")
@@ -346,7 +346,7 @@ while opcion != "f":
                         case "4":
                             columna = solicitar_entero("Columna: ")
 
-                            if columna >= 0 and columna < len(tabla["columnas"]):
+                            if validar_rango(columna, 0, len(tabla["columnas"]) - 1):
                                 valor = solicitar_texto("Valor: ")
 
                                 filtrar_columna(tabla, columna, valor)
@@ -368,7 +368,7 @@ while opcion != "f":
 
                     columna = solicitar_entero("Columna: ")
 
-                    if columna >= 0 and columna < len(tabla["columnas"]):
+                    if validar_rango(columna, 0, len(tabla["columnas"]) - 1):
 
                         print(f"""
                         Conteo: {conteo(tabla["datos"])}
