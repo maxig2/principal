@@ -25,7 +25,9 @@ while not verificar_usuario(nombre, contraseña):
         if verificar_usuario(nombre, contraseña):
             print("Ese usuario ya existe.")
         else:
-            guardar_usuario(nombre, contraseña)
+            guardar_proyecto_completo(
+                proyectos[proyecto_actual]
+            )
 
     else:
         nombre = input("ingrese su nombre: ")
