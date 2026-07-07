@@ -1,10 +1,11 @@
-archivo.write(...)
+def guardar_usuario(nombre:str, contraseña:str):
 
-archivo = open("usuarios.txt", "a")
+    archivo = open("usuarios.txt", "a")
 
-archivo.write(nombre + "," + contraseña + "\n")
+    archivo.write(nombre + "," + contraseña + "\n")
 
-archivo.close()
+    archivo.close()
+
 
 
 def verificar_usuario(nombre:str, contraseña:str)->bool:
